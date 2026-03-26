@@ -181,7 +181,7 @@ Returns `404` if token not found or not owned by the authenticated user.
 
 ## BFun LLM Gateway
 
-**Base URL:** `https://llm-bfunbot.up.railway.app`  
+**Base URL:** `https://llm.bfun.bot`  
 Same `X-Api-Key` header. Requires `llm_enabled` on API key.
 
 - `POST /v1/messages` — Anthropic format (Claude models)

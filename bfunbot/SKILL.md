@@ -28,7 +28,7 @@ Minimum $1 to start. Credits are consumed per token used.
 ### Step 3 — Set up BFun LLM Gateway *(optional)*
 > This step registers BFunBot as your agent's AI model provider, so your agent *thinks* using Claude/GPT/Gemini billed to your BFun.bot Credits — instead of paying Anthropic/OpenAI directly. It's separate from the Agent API skill.
 >
-> **OpenClaw users:** follow the config below. If you're using LangChain, CrewAI, or any OpenAI-compatible framework, point your `base_url` to `https://llm-bfunbot.up.railway.app/v1` with your `bfbot_...` API key instead.
+> **OpenClaw users:** follow the config below. If you're using LangChain, CrewAI, or any OpenAI-compatible framework, point your `base_url` to `https://llm.bfun.bot/v1` with your `bfbot_...` API key instead.
 >
 > **OpenClaw users** — add BFunBot as an LLM provider in `~/.openclaw/openclaw.json`. This is the full config with all available models — you only need to include the models you want to use.
 
@@ -38,7 +38,7 @@ Minimum $1 to start. Credits are consumed per token used.
     "mode": "merge",
     "providers": {
       "bfunbot": {
-        "baseUrl": "https://llm-bfunbot.up.railway.app",
+        "baseUrl": "https://llm.bfun.bot",
         "apiKey": "YOUR_BFBOT_API_KEY",
         "api": "openai-completions",
         "models": [
@@ -586,14 +586,14 @@ Response:
 
 ## BFun LLM Gateway Reference
 
-**Base URL:** `https://llm-bfunbot.up.railway.app`  
+**Base URL:** `https://llm.bfun.bot`  
 **Auth:** `X-Api-Key: bfbot_...` or `Authorization: Bearer bfbot_...`
 
 ### POST /v1/messages (Anthropic format)
 Compatible with Claude models via Anthropic Messages API format.
 
 ```bash
-curl https://llm-bfunbot.up.railway.app/v1/messages \
+curl https://llm.bfun.bot/v1/messages \
   -H "Content-Type: application/json" \
   -H "X-Api-Key: YOUR_BFBOT_API_KEY" \
   -d '{
@@ -607,7 +607,7 @@ curl https://llm-bfunbot.up.railway.app/v1/messages \
 Compatible with all models via OpenAI Chat Completions format.
 
 ```bash
-curl https://llm-bfunbot.up.railway.app/v1/chat/completions \
+curl https://llm.bfun.bot/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "X-Api-Key: YOUR_BFBOT_API_KEY" \
   -d '{
