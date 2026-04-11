@@ -7,7 +7,7 @@ description: Create tokens on BSC, check fee earnings, check BFun.bot Credits ba
 
 Create tokens on BSC, earn trading fees, and use BFunBot's BFun LLM Gateway — all from natural language commands.
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Provider:** [BFunBot](https://bfun.bot)  
 **Auth:** API key required — get yours at [bfun.bot/settings/api-keys](https://bfun.bot/settings/api-keys)  
 **Install:** `install the bfunbot skill from https://github.com/BFunBot/skills/tree/main/bfunbot`
