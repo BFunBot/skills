@@ -192,7 +192,7 @@ Platform: `flap` · `fourmeme` · `bfun`.
 }
 ```
 
-Unsupported platforms (`basememe`, `clanker`, `pumpfun`) return `200` with `{ "platform": "...", "supported": false, "message": "..." }` — surface the message to the user. `400` for invalid `(chain, platform)` combos (hint: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`). `404` if token not found or not owned by the authenticated user.
+Untracked cross-chain platforms — `basememe` (Base), `clanker` (Base), `pumpfun` (Solana) — return `200` with `{ "platform": "...", "supported": false, "message": "..." }`. These are real launchers on other chains but BFunBot does not track per-token fees for them; surface the message to the user. `400` for invalid `(chain, platform)` combos (hint: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`). `404` if token not found or not owned by the authenticated user.
 
 ---
 

@@ -601,7 +601,7 @@ Response (`200 OK`, supported platform):
 }
 ```
 
-Response (`200 OK`, unsupported platform — `basememe`, `clanker`, `pumpfun`):
+Response (`200 OK`, untracked cross-chain platform — `basememe` (Base), `clanker` (Base), `pumpfun` (Solana)):
 ```json
 {
   "platform": "basememe",
@@ -610,7 +610,7 @@ Response (`200 OK`, unsupported platform — `basememe`, `clanker`, `pumpfun`):
 }
 ```
 
-Note: status is `200` for unsupported platforms — check `supported` and surface `message` to the user.
+These are real token-launcher platforms on other chains — BFunBot recognizes the name but does not currently track per-token fees for them. Status is `200`; check `supported` and surface `message` to the user rather than treating it as an error.
 
 Errors:
 - `400` — Invalid `(chain, platform)` combination. Error hint lists valid combos: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`.
