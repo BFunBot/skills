@@ -601,16 +601,16 @@ Response (`200 OK`, supported platform):
 }
 ```
 
-Response (`200 OK`, untracked cross-chain platform — `basememe` (Base), `clanker` (Base), `pumpfun` (Solana)):
+Response (`200 OK`, platform outside the supported BSC set):
 ```json
 {
-  "platform": "basememe",
+  "platform": "<requested-platform>",
   "supported": false,
-  "message": "Per-token fee tracking is not available for basememe on BFunBot. BFunBot supports flap, fourmeme, and bfun on BSC only."
+  "message": "Per-token fee tracking is not available for <requested-platform> on BFunBot. BFunBot supports flap, fourmeme, and bfun on BSC only."
 }
 ```
 
-These are real token-launcher platforms on other chains — BFunBot recognizes the name but does not currently track per-token fees for them. Status is `200`; check `supported` and surface `message` to the user rather than treating it as an error.
+If `platform` is recognized by the server but not one of `flap` / `fourmeme` / `bfun`, status is `200` and `supported: false`. Check `supported` and surface `message` to the user rather than treating it as an error.
 
 Errors:
 - `400` — Invalid `(chain, platform)` combination. Error hint lists valid combos: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`.
