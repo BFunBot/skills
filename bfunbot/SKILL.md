@@ -273,7 +273,9 @@ Check creator fee earnings on BSC — data is read from pre-computed DB cache (f
 - "show my fee earnings summary on BSC"
 - "what have I earned from my flap tokens on BSC?"
 - "what have I earned from my fourmeme tokens?"
+- "what have I earned from my bfun tokens?"
 - "how much has token 0x... earned on flap?"
+- "how much has token 0x... earned on bfun?"
 
 ### Token Lookup
 - "what's the price of $MOON on BFunBot?"
@@ -332,7 +334,7 @@ Response:
   "skills": [
     {
       "name": "token_create",
-      "description": "Deploy a new token on BSC",
+      "description": "Deploy a new token on BSC (flap, fourmeme, or bfun)",
       "example": "POST /agent/v1/token/create {\"name\": \"MyToken\", \"symbol\": \"MTK\", \"chain\": \"bsc\"}"
     }
   ],
@@ -361,7 +363,7 @@ Request:
 - `chain`: `bsc` only
 - `source_url` (optional): Twitter/X post URL — tweet image used as token image if `image_url` not provided
 - `image_url` (optional): HTTP/HTTPS URL or IPFS URI — overrides source tweet image
-- `platform` (optional): `flap` | `fourmeme` — defaults to chain default if omitted
+- `platform` (optional): `flap` | `fourmeme` | `bfun` — defaults to chain default if omitted
 
 Response (`202 Accepted`):
 ```json
@@ -549,9 +551,12 @@ Response:
     "chain_id": 56,
     "token_count": 12,
     "total_earned_bnb": 0.053
-  }
+  },
+  "bnb_price_usd": 596.67
 }
 ```
+
+`total_earned_bnb` sums `flap + fourmeme + bfun` server-side. `bnb_price_usd` is the current BNB/USD spot price, included so agents can convert `total_earned_bnb` to USD without a separate call. Pre-computed totals refresh roughly every 10 minutes, so expect up to ~10 min of lag after a new on-chain reward.
 
 ---
 
@@ -566,34 +571,50 @@ Response:
   "chain": "bsc",
   "chain_id": 56,
   "flap":     { "total_earned_bnb": 0.042, "earning_token_count": 3 },
-  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 }
+  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 },
+  "bfun":     { "total_earned_bnb": 1.000, "earning_token_count": 5 }
 }
 ```
+
+`flap` and `fourmeme` are always present. `bfun` is declared `Optional` in the OpenAPI contract (added in a later release); the current server always populates it, but codegen'd clients should tolerate its absence for forward-compatibility. `earning_token_count` only counts tokens with a strictly-positive creator reward.
 
 ---
 
 ### GET /fees/token
 Get fee earnings for a specific token on BSC.
 
-Query: `?chain=bsc&platform=flap&token_address=0x...`
+Query: `?chain=bsc&platform=bfun&token_address=0x...`
 
 - `chain`: `bsc` only
-- `platform`: `flap` | `fourmeme`
+- `platform`: `flap` | `fourmeme` | `bfun`
 - `token_address`: contract address
 
-Response:
+Response (`200 OK`, supported platform):
 ```json
 {
   "token_address": "0x...",
   "token_name": "MyToken",
   "token_symbol": "MTK",
-  "platform": "flap",
+  "platform": "bfun",
   "chain": "bsc",
   "earned_bnb": 0.021
 }
 ```
 
-Returns `404` if token not found or not owned by the authenticated user.
+Response (`200 OK`, unsupported platform — `basememe`, `clanker`, `pumpfun`):
+```json
+{
+  "platform": "basememe",
+  "supported": false,
+  "message": "Per-token fee tracking is not available for basememe on BFunBot. BFunBot supports flap, fourmeme, and bfun on BSC only."
+}
+```
+
+Note: status is `200` for unsupported platforms — check `supported` and surface `message` to the user.
+
+Errors:
+- `400` — Invalid `(chain, platform)` combination. Error hint lists valid combos: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`.
+- `404` — Token not found, or token exists but was not created by the authenticated user.
 
 ---
 

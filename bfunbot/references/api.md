@@ -50,7 +50,7 @@
 ```
 
 Chain: `bsc` only  
-Platform (optional): `flap` · `fourmeme`  
+Platform (optional): `flap` · `fourmeme` · `bfun`  
 Returns (`202`): `{ "job_id": 12345, "status": "pending", "chain": "bsc", "quota": {...} }`  
 Poll `/jobs/{job_id}` until `status` is `completed` or `failed`.
 
@@ -152,9 +152,12 @@ Fields are `null` if wallet not set up or RPC unavailable. Check `*_error` field
     "chain_id": 56,
     "token_count": 12,
     "total_earned_bnb": 0.053
-  }
+  },
+  "bnb_price_usd": 596.67
 }
 ```
+
+`total_earned_bnb` sums `flap + fourmeme + bfun`. `bnb_price_usd` is the current BNB/USD spot so agents can convert without a second call.
 
 ---
 
@@ -165,26 +168,31 @@ Fields are `null` if wallet not set up or RPC unavailable. Check `*_error` field
   "chain": "bsc",
   "chain_id": 56,
   "flap":     { "total_earned_bnb": 0.042, "earning_token_count": 3 },
-  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 }
+  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 },
+  "bfun":     { "total_earned_bnb": 1.000, "earning_token_count": 5 }
 }
 ```
 
+`bfun` is declared `Optional` in the OpenAPI contract (current server always populates it) — codegen'd clients should tolerate its absence for forward-compat.
+
 ---
 
-## GET /fees/token?chain=bsc&platform=flap&token_address=0x...
+## GET /fees/token?chain=bsc&platform=bfun&token_address=0x...
+
+Platform: `flap` · `fourmeme` · `bfun`.
 
 ```json
 {
   "token_address": "0x...",
   "token_name": "MyToken",
   "token_symbol": "MTK",
-  "platform": "flap",
+  "platform": "bfun",
   "chain": "bsc",
   "earned_bnb": 0.021
 }
 ```
 
-Returns `404` if token not found or not owned by the authenticated user.
+Unsupported platforms (`basememe`, `clanker`, `pumpfun`) return `200` with `{ "platform": "...", "supported": false, "message": "..." }` — surface the message to the user. `400` for invalid `(chain, platform)` combos (hint: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`). `404` if token not found or not owned by the authenticated user.
 
 ---
 
