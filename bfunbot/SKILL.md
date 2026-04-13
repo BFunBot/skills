@@ -73,8 +73,8 @@ Minimum $1 to start. Credits are consumed per token used.
           { "id": "bfunbot-qwen-3-5-flash",        "name": "Qwen3.5 Flash",            "contextWindow": 1000000,    "maxTokens": 16384 },
           { "id": "bfunbot-minimax-m2-7",          "name": "MiniMax M2.7",             "contextWindow": 204800,     "maxTokens": 16384 },
           { "id": "bfunbot-minimax-m2-5",          "name": "MiniMax M2.5",             "contextWindow": 196608,     "maxTokens": 16384 },
-          { "id": "bfunbot-glm-5-turbo",           "name": "GLM 5 Turbo",              "contextWindow": 202752,     "maxTokens": 16384 },
-          { "id": "bfunbot-glm-5",                 "name": "GLM 5",                    "contextWindow": 80000,      "maxTokens": 16384 }
+          { "id": "bfunbot-glm-5-1",               "name": "GLM 5.1",                  "contextWindow": 202752,     "maxTokens": 65535 },
+          { "id": "bfunbot-glm-5-turbo",           "name": "GLM 5 Turbo",              "contextWindow": 202752,     "maxTokens": 16384 }
         ]
       }
     }
@@ -113,8 +113,8 @@ Minimum $1 to start. Credits are consumed per token used.
         "bfunbot/bfunbot-qwen-3-5-flash":        { "alias": "bfunbot-qwen-3-5-flash" },
         "bfunbot/bfunbot-minimax-m2-7":          { "alias": "bfunbot-minimax-m2-7" },
         "bfunbot/bfunbot-minimax-m2-5":          { "alias": "bfunbot-minimax-m2-5" },
-        "bfunbot/bfunbot-glm-5-turbo":           { "alias": "bfunbot-glm-5-turbo" },
-        "bfunbot/bfunbot-glm-5":                 { "alias": "bfunbot-glm-5" }
+        "bfunbot/bfunbot-glm-5-1":               { "alias": "bfunbot-glm-5-1" },
+        "bfunbot/bfunbot-glm-5-turbo":           { "alias": "bfunbot-glm-5-turbo" }
       }
     }
   }
@@ -228,8 +228,8 @@ Switch models using the dropdown picker or `/model` command:
 **Z.ai**
 | Model ID | Context |
 |---|---|
+| `glm-5-1` | 203k |
 | `glm-5-turbo` | 203k |
-| `glm-5` | 80k |
 
 Verify by asking your agent: *"what's my BFunBot BFun.bot Credits balance?"*
 
