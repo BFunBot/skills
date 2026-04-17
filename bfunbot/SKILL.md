@@ -42,8 +42,8 @@ Minimum $1 to start. Credits are consumed per token used.
         "apiKey": "YOUR_BFBOT_API_KEY",
         "api": "openai-completions",
         "models": [
+          { "id": "bfunbot-opus-4-7",              "name": "Claude Opus 4.7",          "api": "anthropic-messages", "contextWindow": 1000000,  "maxTokens": 128000 },
           { "id": "bfunbot-opus-4-6",              "name": "Claude Opus 4.6",          "api": "anthropic-messages", "contextWindow": 1000000,  "maxTokens": 128000 },
-          { "id": "bfunbot-opus-4-5",              "name": "Claude Opus 4.5",          "api": "anthropic-messages", "contextWindow": 200000,   "maxTokens": 64000  },
           { "id": "bfunbot-sonnet-4-6",            "name": "Claude Sonnet 4.6",        "api": "anthropic-messages", "contextWindow": 1000000,  "maxTokens": 128000 },
           { "id": "bfunbot-sonnet-4-5",            "name": "Claude Sonnet 4.5",        "api": "anthropic-messages", "contextWindow": 1000000,  "maxTokens": 64000  },
           { "id": "bfunbot-haiku-4-5",             "name": "Claude Haiku 4.5",         "api": "anthropic-messages", "contextWindow": 200000,   "maxTokens": 4096   },
@@ -82,8 +82,8 @@ Minimum $1 to start. Credits are consumed per token used.
   "agents": {
     "defaults": {
       "models": {
+        "bfunbot/bfunbot-opus-4-7":              { "alias": "bfunbot-opus-4-7" },
         "bfunbot/bfunbot-opus-4-6":              { "alias": "bfunbot-opus-4-6" },
-        "bfunbot/bfunbot-opus-4-5":              { "alias": "bfunbot-opus-4-5" },
         "bfunbot/bfunbot-sonnet-4-6":            { "alias": "bfunbot-sonnet-4-6" },
         "bfunbot/bfunbot-sonnet-4-5":            { "alias": "bfunbot-sonnet-4-5" },
         "bfunbot/bfunbot-haiku-4-5":             { "alias": "bfunbot-haiku-4-5" },
@@ -143,7 +143,7 @@ openclaw gateway restart
 
 Switch models using the dropdown picker or `/model` command:
 ```
-/model bfunbot-opus-4-6
+/model bfunbot-opus-4-7
 /model bfunbot-sonnet-4-6
 /model bfunbot-haiku-4-5
 /model bfunbot-gpt-5-4
@@ -157,8 +157,8 @@ Switch models using the dropdown picker or `/model` command:
 **Anthropic**
 | Model ID | Context |
 |---|---|
+| `claude-opus-4-7` | 1M |
 | `claude-opus-4-6` | 1M |
-| `claude-opus-4-5` | 200k |
 | `claude-sonnet-4-6` | 1M |
 | `claude-sonnet-4-5` | 1M |
 | `claude-haiku-4-5` | 200k |
