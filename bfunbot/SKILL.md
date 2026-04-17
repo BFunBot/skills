@@ -7,7 +7,7 @@ description: Create tokens on BSC, check fee earnings, check BFun.bot Credits ba
 
 Create tokens on BSC, earn trading fees, and use BFunBot's BFun LLM Gateway — all from natural language commands.
 
-**Version:** 1.1.0  
+**Version:** 1.2.0  
 **Provider:** [BFunBot](https://bfun.bot)  
 **Auth:** API key required — get yours at [bfun.bot/settings/api-keys](https://bfun.bot/settings/api-keys)  
 **Install:** `install the bfunbot skill from https://github.com/BFunBot/skills/tree/main/bfunbot`
@@ -251,8 +251,12 @@ Create tokens on BSC — BFunBot handles wallet creation, gas sponsorship, and o
 - "launch a token called MOON on BSC"
 - "create a meme coin named PEPE with ticker $PEPE on fourmeme"
 - "make a test token called DEMO on flap"
+- "create a token for @elonmusk on flap" *(metadata inherits from target X profile)*
+- "launch $KIBI on flap and split the creator fee 50/20 between me and 0xAbCd..." *(multi-recipient fee split)*
 
 Token creation is async. After calling the API, poll the job status endpoint until complete (usually 30–60 seconds).
+
+**Fee sharing & creating for other users:** `POST /token/create` accepts two optional fields — `target_twitter_handle` (create a token *for* another X user, inheriting their name / symbol / profile image) and `fee_recipients` (split the creator's share of trading fees across wallets or X handles). When using `fee_recipients`, always call `GET /token/platform-config` first to read live split limits — do not hardcode them.
 
 ### Created Tokens
 - "what tokens have I created on BFunBot?"
@@ -344,6 +348,46 @@ Response:
 
 ---
 
+### GET /token/platform-config
+Read the live fee / split / tax configuration for a token-creation platform. **Call this before `POST /token/create` whenever you plan to pass `fee_recipients`** — values are env-driven and may change without client releases.
+
+Query params:
+
+| Name | Type | Required | Default | Notes |
+|---|---|---|---|---|
+| `platform` | string | ✅ | — | One of `flap`, `bfun`, `fourmeme` |
+| `chain_id` | int | — | `56` | BSC = 56 |
+
+Response (`200 OK`):
+```json
+{
+  "platform": "flap",
+  "platform_fee_bps": 3000,
+  "creator_fee_bps": 7000,
+  "max_fee_recipients": 9,
+  "supports_fee_split": true,
+  "tax_rate_bps": 100,
+  "chain_id": 56,
+  "max_fee_percent": 70
+}
+```
+
+Field semantics:
+
+| Field | Meaning |
+|---|---|
+| `platform_fee_bps` | Platform's fixed share of trade fees (3000 = 30%). |
+| `creator_fee_bps` | Remaining share available for the creator / `fee_recipients` (7000 = 70%). |
+| `max_fee_recipients` | Max entries allowed in `fee_recipients`. |
+| `supports_fee_split` | If `false`, `fee_recipients` must have at most 1 entry (e.g. `fourmeme`). |
+| `tax_rate_bps` | Informational per-trade protocol fee (display only). |
+| `max_fee_percent` | **The sum of `fee_recipients[*].percent` must equal exactly this number** — not 100. Equals `creator_fee_bps / 100`. |
+
+Errors:
+- `400` — `Unknown platform: 'xxx'. Supported: flap, bfun, fourmeme`
+
+---
+
 ### POST /token/create
 Create a token on BSC (async). Returns a `job_id` to poll.
 
@@ -356,7 +400,12 @@ Request:
   "description": "To the moon",
   "source_url": "https://x.com/user/status/123",
   "image_url": "https://...",
-  "platform": "flap"
+  "platform": "flap",
+  "target_twitter_handle": "elonmusk",
+  "fee_recipients": [
+    { "twitter_handle": "myself", "percent": 50 },
+    { "address": "0xAbCdEf0123456789abcdef0123456789AbCdEf01", "percent": 20 }
+  ]
 }
 ```
 
@@ -364,6 +413,8 @@ Request:
 - `source_url` (optional): Twitter/X post URL — tweet image used as token image if `image_url` not provided
 - `image_url` (optional): HTTP/HTTPS URL or IPFS URI — overrides source tweet image
 - `platform` (optional): `flap` | `fourmeme` | `bfun` — defaults to chain default if omitted
+- `target_twitter_handle` (optional): create the token *for* another X user. 1–15 chars, `[A-Za-z0-9_]` (leading `@` stripped server-side). The target's X profile supplies defaults for `name` (display name), `symbol` (handle, uppercased), and `image_url` (profile picture) — but explicit fields on the request still win. The target's wallet is auto-created if missing. Default fee payout still goes to the **caller**; use `fee_recipients` to route to the target.
+- `fee_recipients` (optional): split the creator's share of trading fees. Each entry takes exactly one of `address` or `twitter_handle`, plus an integer `percent`. **Call `GET /token/platform-config` first** — the sum of `percent` values must equal `max_fee_percent` (70 on flap / bfun, 100 on fourmeme), **not 100**. On non-split platforms (`fourmeme`, `supports_fee_split=false`) only 1 entry is allowed, and a non-self `twitter_handle` is rejected — pass a wallet `address` instead. Unresolvable handles at processor time fall back to the creator's share (no error at submission).
 
 Response (`202 Accepted`):
 ```json
@@ -384,6 +435,15 @@ Pre-check errors:
 - `403 insufficient_followers` — need minimum followers to create tokens
 - `402 insufficient_balance` — free quota used, trading wallet balance too low
 - `429 daily_cap_exceeded` — absolute daily cap reached
+
+Fee / platform validation errors:
+- `400 unknown_platform` — `platform` not in `{flap, bfun, fourmeme}`
+- `422 fee_split_not_supported` — platform's `supports_fee_split=false` but `fee_recipients` has >1 entry
+- `422 too_many_recipients` — `len(fee_recipients) > max_fee_recipients`
+- `422 no_creator_fee_share` — platform has `platform_fee_bps == 10000` (no creator share to distribute)
+- `422 fee_percent_sum_invalid` — `sum(fee_recipients[*].percent)` ≠ `max_fee_percent`. Response includes `expected` and `got`.
+- `422 fee_recipient_handle_unsupported` — non-split platform received a non-self `fee_recipients[0].twitter_handle`. Pass a wallet `address` instead.
+- `422 fee_recipient_unroutable` — `fee_recipients[0]` has neither `address` nor `twitter_handle`.
 
 ---
 

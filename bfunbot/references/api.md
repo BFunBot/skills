@@ -11,6 +11,7 @@
 |--------|------|-------------|
 | GET | `/me` | User profile & wallet addresses |
 | GET | `/skills` | List all agent capabilities (no auth required) |
+| GET | `/token/platform-config` | Read live fee/split config for a platform |
 | POST | `/token/create` | Create token on-chain (async) |
 | GET | `/jobs/{job_id}` | Poll token creation status |
 | GET | `/token/{address}` | Token price & info (`?chain=bsc`) |
@@ -35,6 +36,29 @@
 
 ---
 
+## GET /token/platform-config?platform=flap&chain_id=56
+
+Read live fee / split / tax config. **Call before `POST /token/create` whenever `fee_recipients` is used** — values are env-driven.
+
+```json
+{
+  "platform": "flap",
+  "platform_fee_bps": 3000,
+  "creator_fee_bps": 7000,
+  "max_fee_recipients": 9,
+  "supports_fee_split": true,
+  "tax_rate_bps": 100,
+  "chain_id": 56,
+  "max_fee_percent": 70
+}
+```
+
+`platform`: `flap` · `fourmeme` · `bfun` (required). `chain_id`: default `56`.  
+`max_fee_percent` is the exact sum required for `fee_recipients[*].percent` (70 on flap/bfun, 100 on fourmeme) — **not 100 across the board**.  
+`supports_fee_split=false` → `fee_recipients` must have at most 1 entry. `400` for unknown platform.
+
+---
+
 ## POST /token/create
 
 ```json
@@ -45,14 +69,32 @@
   "description": "...",
   "image_url": "https://...",
   "source_url": "https://x.com/user/status/123",
-  "platform": "flap"
+  "platform": "flap",
+  "target_twitter_handle": "elonmusk",
+  "fee_recipients": [
+    { "twitter_handle": "myself", "percent": 50 },
+    { "address": "0xAbCdEf0123456789abcdef0123456789AbCdEf01", "percent": 20 }
+  ]
 }
 ```
 
-Chain: `bsc` only  
-Platform (optional): `flap` · `fourmeme` · `bfun`  
+Chain: `bsc` only. Platform (optional): `flap` · `fourmeme` · `bfun`.  
+`target_twitter_handle` (optional): create a token *for* another X user — name / symbol / image inherit from their profile unless explicitly overridden. Target wallet auto-created. Default fees still go to the caller.  
+`fee_recipients` (optional): split the creator's fee share. Each entry has exactly one of `address` or `twitter_handle`, plus integer `percent`. **Call `/token/platform-config` first**; percents must sum to `max_fee_percent` (70 on flap/bfun, 100 on fourmeme). On `fourmeme` only one entry is allowed and a non-self `twitter_handle` is rejected — use a wallet `address`. Unresolvable handles fall back to the creator at processor time.
+
 Returns (`202`): `{ "job_id": 12345, "status": "pending", "chain": "bsc", "quota": {...} }`  
 Poll `/jobs/{job_id}` until `status` is `completed` or `failed`.
+
+Fee / platform errors:
+- `400 unknown_platform` — `platform` not in `{flap, bfun, fourmeme}`
+- `422 fee_split_not_supported` — `supports_fee_split=false` but >1 recipient
+- `422 too_many_recipients` — `len(fee_recipients) > max_fee_recipients`
+- `422 no_creator_fee_share` — platform has `platform_fee_bps == 10000`
+- `422 fee_percent_sum_invalid` — sum of `percent` ≠ `max_fee_percent` (response includes `expected`, `got`)
+- `422 fee_recipient_handle_unsupported` — non-split platform got a non-self `twitter_handle`; pass `address`
+- `422 fee_recipient_unroutable` — entry has neither `address` nor `twitter_handle`
+
+Pre-check errors: `403 insufficient_followers` · `402 insufficient_balance` · `429 daily_cap_exceeded`.
 
 ---
 
