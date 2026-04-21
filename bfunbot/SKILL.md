@@ -62,7 +62,7 @@ Minimum $1 to start. Credits are consumed per token used.
           { "id": "bfunbot-gemini-2-5-flash",      "name": "Gemini 2.5 Flash",         "contextWindow": 1048576,    "maxTokens": 8192  },
           { "id": "bfunbot-grok-4-1",              "name": "Grok 4.1 Fast",            "contextWindow": 2000000,    "maxTokens": 16384 },
           { "id": "bfunbot-deepseek-v3-2",         "name": "DeepSeek V3.2",            "contextWindow": 164000,     "maxTokens": 16384 },
-          { "id": "bfunbot-kimi-k2-5",             "name": "Kimi K2.5",                "contextWindow": 262144,     "maxTokens": 16384 },
+          { "id": "bfunbot-kimi-k2-6",             "name": "Kimi K2.6",                "contextWindow": 262144,     "maxTokens": 16384 },
           { "id": "bfunbot-mimo-v2-pro",           "name": "MiMo-V2-Pro",              "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-mimo-v2-omni",          "name": "MiMo-V2-Omni",             "contextWindow": 262144,     "maxTokens": 16384 },
           { "id": "bfunbot-mimo-v2-flash",         "name": "MiMo-V2-Flash",            "contextWindow": 262144,     "maxTokens": 16384 },
@@ -197,7 +197,7 @@ Switch models using the dropdown picker or `/model` command:
 **Moonshot**
 | Model ID | Context |
 |---|---|
-| `kimi-k2.5` | 262k |
+| `kimi-k2.6` | 262k |
 
 **Xiaomi**
 | Model ID | Context |
