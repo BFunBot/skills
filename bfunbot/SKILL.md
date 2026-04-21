@@ -102,7 +102,7 @@ Minimum $1 to start. Credits are consumed per token used.
         "bfunbot/bfunbot-gemini-2-5-flash":      { "alias": "bfunbot-gemini-2-5-flash" },
         "bfunbot/bfunbot-grok-4-1":              { "alias": "bfunbot-grok-4-1" },
         "bfunbot/bfunbot-deepseek-v3-2":         { "alias": "bfunbot-deepseek-v3-2" },
-        "bfunbot/bfunbot-kimi-k2-5":             { "alias": "bfunbot-kimi-k2-5" },
+        "bfunbot/bfunbot-kimi-k2-6":             { "alias": "bfunbot-kimi-k2-6" },
         "bfunbot/bfunbot-mimo-v2-pro":           { "alias": "bfunbot-mimo-v2-pro" },
         "bfunbot/bfunbot-mimo-v2-omni":          { "alias": "bfunbot-mimo-v2-omni" },
         "bfunbot/bfunbot-mimo-v2-flash":         { "alias": "bfunbot-mimo-v2-flash" },
