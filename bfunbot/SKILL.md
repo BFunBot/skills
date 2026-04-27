@@ -61,7 +61,7 @@ Minimum $1 to start. Credits are consumed per token used.
           { "id": "bfunbot-gemini-2-5-pro",        "name": "Gemini 2.5 Pro",           "contextWindow": 1048576,    "maxTokens": 8192  },
           { "id": "bfunbot-gemini-2-5-flash",      "name": "Gemini 2.5 Flash",         "contextWindow": 1048576,    "maxTokens": 8192  },
           { "id": "bfunbot-grok-4-1",              "name": "Grok 4.1 Fast",            "contextWindow": 2000000,    "maxTokens": 16384 },
-          { "id": "bfunbot-deepseek-v3-2",         "name": "DeepSeek V3.2",            "contextWindow": 164000,     "maxTokens": 16384 },
+          { "id": "bfunbot-deepseek-v4-pro",       "name": "DeepSeek V4 Pro",          "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-kimi-k2-6",             "name": "Kimi K2.6",                "contextWindow": 262144,     "maxTokens": 16384 },
           { "id": "bfunbot-mimo-v2-pro",           "name": "MiMo-V2-Pro",              "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-mimo-v2-omni",          "name": "MiMo-V2-Omni",             "contextWindow": 262144,     "maxTokens": 16384 },
@@ -101,7 +101,7 @@ Minimum $1 to start. Credits are consumed per token used.
         "bfunbot/bfunbot-gemini-2-5-pro":        { "alias": "bfunbot-gemini-2-5-pro" },
         "bfunbot/bfunbot-gemini-2-5-flash":      { "alias": "bfunbot-gemini-2-5-flash" },
         "bfunbot/bfunbot-grok-4-1":              { "alias": "bfunbot-grok-4-1" },
-        "bfunbot/bfunbot-deepseek-v3-2":         { "alias": "bfunbot-deepseek-v3-2" },
+        "bfunbot/bfunbot-deepseek-v4-pro":       { "alias": "bfunbot-deepseek-v4-pro" },
         "bfunbot/bfunbot-kimi-k2-6":             { "alias": "bfunbot-kimi-k2-6" },
         "bfunbot/bfunbot-mimo-v2-pro":           { "alias": "bfunbot-mimo-v2-pro" },
         "bfunbot/bfunbot-mimo-v2-omni":          { "alias": "bfunbot-mimo-v2-omni" },
@@ -149,7 +149,7 @@ Switch models using the dropdown picker or `/model` command:
 /model bfunbot-gpt-5-4
 /model bfunbot-gemini-3-1-pro
 /model bfunbot-grok-4-1
-/model bfunbot-deepseek-v3-2
+/model bfunbot-deepseek-v4-pro
 ```
 
 ### Available Models
@@ -192,7 +192,7 @@ Switch models using the dropdown picker or `/model` command:
 **DeepSeek**
 | Model ID | Context |
 |---|---|
-| `deepseek-v3.2` | 164k |
+| `deepseek-v4-pro` | 1M |
 
 **Moonshot**
 | Model ID | Context |
