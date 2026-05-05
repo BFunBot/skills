@@ -36,25 +36,25 @@
 
 ---
 
-## GET /token/platform-config?platform=flap&chain_id=56
+## GET /token/platform-config?platform=bfun&chain_id=56
 
 Read live fee / split / tax config. **Call before `POST /token/create` whenever `fee_recipients` is used** — values are env-driven.
 
 ```json
 {
-  "platform": "flap",
-  "platform_fee_bps": 3000,
-  "creator_fee_bps": 7000,
+  "platform": "bfun",
+  "platform_fee_bps": 1000,
+  "creator_fee_bps": 9000,
   "max_fee_recipients": 9,
   "supports_fee_split": true,
   "tax_rate_bps": 100,
   "chain_id": 56,
-  "max_fee_percent": 70
+  "max_fee_percent": 90
 }
 ```
 
-`platform`: `flap` · `fourmeme` · `bfun` (required). `chain_id`: default `56`.  
-`max_fee_percent` is the exact sum required for `fee_recipients[*].percent` (70 on flap/bfun, 100 on fourmeme) — **not 100 across the board**.  
+`platform`: `bfun` · `flap` · `fourmeme` (required). `chain_id`: default `56`.  
+`max_fee_percent` is the exact sum required for `fee_recipients[*].percent` (90 on bfun/flap, 100 on fourmeme) — **not 100 across the board**.  
 `supports_fee_split=false` → `fee_recipients` must have at most 1 entry. `400` for unknown platform.
 
 ---
@@ -69,24 +69,24 @@ Read live fee / split / tax config. **Call before `POST /token/create` whenever 
   "description": "...",
   "image_url": "https://...",
   "source_url": "https://x.com/user/status/123",
-  "platform": "flap",
+  "platform": "bfun",
   "target_twitter_handle": "elonmusk",
   "fee_recipients": [
-    { "twitter_handle": "myself", "percent": 50 },
-    { "address": "0xAbCdEf0123456789abcdef0123456789AbCdEf01", "percent": 20 }
+    { "twitter_handle": "myself", "percent": 60 },
+    { "address": "0xAbCdEf0123456789abcdef0123456789AbCdEf01", "percent": 30 }
   ]
 }
 ```
 
-Chain: `bsc` only. Platform (optional): `flap` · `fourmeme` · `bfun`.  
+Chain: `bsc` only. Platform (optional, default `bfun` on BSC): `bfun` · `flap` · `fourmeme`.  
 `target_twitter_handle` (optional): create a token *for* another X user — name / symbol / image inherit from their profile unless explicitly overridden. Target wallet auto-created. Default fees still go to the caller.  
-`fee_recipients` (optional): split the creator's fee share. Each entry has exactly one of `address` or `twitter_handle`, plus integer `percent`. **Call `/token/platform-config` first**; percents must sum to `max_fee_percent` (70 on flap/bfun, 100 on fourmeme). On `fourmeme` only one entry is allowed and a non-self `twitter_handle` is rejected — use a wallet `address`. Unresolvable handles fall back to the creator at processor time.
+`fee_recipients` (optional): split the creator's fee share. Each entry has exactly one of `address` or `twitter_handle`, plus integer `percent`. **Call `/token/platform-config` first**; percents must sum to `max_fee_percent` (90 on bfun/flap, 100 on fourmeme). On `fourmeme` only one entry is allowed and a non-self `twitter_handle` is rejected — use a wallet `address`. Unresolvable handles fall back to the creator at processor time.
 
 Returns (`202`): `{ "job_id": 12345, "status": "pending", "chain": "bsc", "quota": {...} }`  
 Poll `/jobs/{job_id}` until `status` is `completed` or `failed`.
 
 Fee / platform errors:
-- `400 unknown_platform` — `platform` not in `{flap, bfun, fourmeme}`
+- `400 unknown_platform` — `platform` not in `{bfun, flap, fourmeme}`
 - `422 fee_split_not_supported` — `supports_fee_split=false` but >1 recipient
 - `422 too_many_recipients` — `len(fee_recipients) > max_fee_recipients`
 - `422 no_creator_fee_share` — platform has `platform_fee_bps == 10000`
@@ -199,7 +199,7 @@ Fields are `null` if wallet not set up or RPC unavailable. Check `*_error` field
 }
 ```
 
-`total_earned_bnb` sums `flap + fourmeme + bfun`. `bnb_price_usd` is the current BNB/USD spot so agents can convert without a second call.
+`total_earned_bnb` sums `bfun + flap + fourmeme`. `bnb_price_usd` is the current BNB/USD spot so agents can convert without a second call.
 
 ---
 
@@ -209,9 +209,9 @@ Fields are `null` if wallet not set up or RPC unavailable. Check `*_error` field
 {
   "chain": "bsc",
   "chain_id": 56,
+  "bfun":     { "total_earned_bnb": 1.000, "earning_token_count": 5 },
   "flap":     { "total_earned_bnb": 0.042, "earning_token_count": 3 },
-  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 },
-  "bfun":     { "total_earned_bnb": 1.000, "earning_token_count": 5 }
+  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 }
 }
 ```
 
@@ -221,7 +221,7 @@ Fields are `null` if wallet not set up or RPC unavailable. Check `*_error` field
 
 ## GET /fees/token?chain=bsc&platform=bfun&token_address=0x...
 
-Platform: `flap` · `fourmeme` · `bfun`.
+Platform: `bfun` · `flap` · `fourmeme`.
 
 ```json
 {
@@ -234,7 +234,7 @@ Platform: `flap` · `fourmeme` · `bfun`.
 }
 ```
 
-A `platform` outside the supported BSC set returns `200` with `{ "platform": "...", "supported": false, "message": "..." }` — check `supported` and surface the message to the user rather than treating it as an error. `400` for invalid `(chain, platform)` combos (hint: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`). `404` if token not found or not owned by the authenticated user.
+A `platform` outside the supported BSC set returns `200` with `{ "platform": "...", "supported": false, "message": "..." }` — check `supported` and surface the message to the user rather than treating it as an error. `400` for invalid `(chain, platform)` combos (hint: `bsc/bfun`, `bsc/flap`, `bsc/fourmeme`). `404` if token not found or not owned by the authenticated user.
 
 ---
 

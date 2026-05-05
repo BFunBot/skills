@@ -7,7 +7,7 @@ description: Create tokens on BSC, check fee earnings, check BFun.bot Credits ba
 
 Create tokens on BSC, earn trading fees, and use BFunBot's BFun LLM Gateway — all from natural language commands.
 
-**Version:** 1.2.0  
+**Version:** 1.2.1  
 **Provider:** [BFunBot](https://bfun.bot)  
 **Auth:** API key required — get yours at [bfun.bot/settings/api-keys](https://bfun.bot/settings/api-keys)  
 **Install:** `install the bfunbot skill from https://github.com/BFunBot/skills/tree/main/bfunbot`
@@ -250,9 +250,9 @@ Create tokens on BSC — BFunBot handles wallet creation, gas sponsorship, and o
 
 - "launch a token called MOON on BSC"
 - "create a meme coin named PEPE with ticker $PEPE on fourmeme"
-- "make a test token called DEMO on flap"
+- "make a test token called DEMO on bfun"
 - "create a token for @elonmusk on flap" *(metadata inherits from target X profile)*
-- "launch $KIBI on flap and split the creator fee 50/20 between me and 0xAbCd..." *(multi-recipient fee split)*
+- "launch $KIBI on bfun and split the creator fee 60/30 between me and 0xAbCd..." *(multi-recipient fee split)*
 
 Token creation is async. After calling the API, poll the job status endpoint until complete (usually 30–60 seconds).
 
@@ -275,11 +275,11 @@ Check creator fee earnings on BSC — data is read from pre-computed DB cache (f
 
 - "what are my BFunBot fee earnings?"
 - "show my fee earnings summary on BSC"
+- "what have I earned from my bfun tokens?"
 - "what have I earned from my flap tokens on BSC?"
 - "what have I earned from my fourmeme tokens?"
-- "what have I earned from my bfun tokens?"
-- "how much has token 0x... earned on flap?"
 - "how much has token 0x... earned on bfun?"
+- "how much has token 0x... earned on flap?"
 
 ### Token Lookup
 - "what's the price of $MOON on BFunBot?"
@@ -338,7 +338,7 @@ Response:
   "skills": [
     {
       "name": "token_create",
-      "description": "Deploy a new token on BSC (flap, fourmeme, or bfun)",
+      "description": "Deploy a new token on BSC (bfun [default], flap, or fourmeme)",
       "example": "POST /agent/v1/token/create {\"name\": \"MyToken\", \"symbol\": \"MTK\", \"chain\": \"bsc\"}"
     }
   ],
@@ -355,20 +355,20 @@ Query params:
 
 | Name | Type | Required | Default | Notes |
 |---|---|---|---|---|
-| `platform` | string | ✅ | — | One of `flap`, `bfun`, `fourmeme` |
+| `platform` | string | ✅ | — | One of `bfun` (default), `flap`, `fourmeme` |
 | `chain_id` | int | — | `56` | BSC = 56 |
 
 Response (`200 OK`):
 ```json
 {
-  "platform": "flap",
-  "platform_fee_bps": 3000,
-  "creator_fee_bps": 7000,
+  "platform": "bfun",
+  "platform_fee_bps": 1000,
+  "creator_fee_bps": 9000,
   "max_fee_recipients": 9,
   "supports_fee_split": true,
   "tax_rate_bps": 100,
   "chain_id": 56,
-  "max_fee_percent": 70
+  "max_fee_percent": 90
 }
 ```
 
@@ -376,15 +376,15 @@ Field semantics:
 
 | Field | Meaning |
 |---|---|
-| `platform_fee_bps` | Platform's fixed share of trade fees (3000 = 30%). |
-| `creator_fee_bps` | Remaining share available for the creator / `fee_recipients` (7000 = 70%). |
+| `platform_fee_bps` | Platform's fixed share of trade fees (1000 = 10%). |
+| `creator_fee_bps` | Remaining share available for the creator / `fee_recipients` (9000 = 90%). |
 | `max_fee_recipients` | Max entries allowed in `fee_recipients`. |
 | `supports_fee_split` | If `false`, `fee_recipients` must have at most 1 entry (e.g. `fourmeme`). |
 | `tax_rate_bps` | Informational per-trade protocol fee (display only). |
 | `max_fee_percent` | **The sum of `fee_recipients[*].percent` must equal exactly this number** — not 100. Equals `creator_fee_bps / 100`. |
 
 Errors:
-- `400` — `Unknown platform: 'xxx'. Supported: flap, bfun, fourmeme`
+- `400` — `Unknown platform: 'xxx'. Supported: bfun, flap, fourmeme`
 
 ---
 
@@ -400,11 +400,11 @@ Request:
   "description": "To the moon",
   "source_url": "https://x.com/user/status/123",
   "image_url": "https://...",
-  "platform": "flap",
+  "platform": "bfun",
   "target_twitter_handle": "elonmusk",
   "fee_recipients": [
-    { "twitter_handle": "myself", "percent": 50 },
-    { "address": "0xAbCdEf0123456789abcdef0123456789AbCdEf01", "percent": 20 }
+    { "twitter_handle": "myself", "percent": 60 },
+    { "address": "0xAbCdEf0123456789abcdef0123456789AbCdEf01", "percent": 30 }
   ]
 }
 ```
@@ -412,9 +412,9 @@ Request:
 - `chain`: `bsc` only
 - `source_url` (optional): Twitter/X post URL — tweet image used as token image if `image_url` not provided
 - `image_url` (optional): HTTP/HTTPS URL or IPFS URI — overrides source tweet image
-- `platform` (optional): `flap` | `fourmeme` | `bfun` — defaults to chain default if omitted
+- `platform` (optional): `bfun` | `flap` | `fourmeme` — defaults to **`bfun`** on BSC if omitted
 - `target_twitter_handle` (optional): create the token *for* another X user. 1–15 chars, `[A-Za-z0-9_]` (leading `@` stripped server-side). The target's X profile supplies defaults for `name` (display name), `symbol` (handle, uppercased), and `image_url` (profile picture) — but explicit fields on the request still win. The target's wallet is auto-created if missing. Default fee payout still goes to the **caller**; use `fee_recipients` to route to the target.
-- `fee_recipients` (optional): split the creator's share of trading fees. Each entry takes exactly one of `address` or `twitter_handle`, plus an integer `percent`. **Call `GET /token/platform-config` first** — the sum of `percent` values must equal `max_fee_percent` (70 on flap / bfun, 100 on fourmeme), **not 100**. On non-split platforms (`fourmeme`, `supports_fee_split=false`) only 1 entry is allowed, and a non-self `twitter_handle` is rejected — pass a wallet `address` instead. Unresolvable handles at processor time fall back to the creator's share (no error at submission).
+- `fee_recipients` (optional): split the creator's share of trading fees. Each entry takes exactly one of `address` or `twitter_handle`, plus an integer `percent`. **Call `GET /token/platform-config` first** — the sum of `percent` values must equal `max_fee_percent` (90 on bfun / flap, 100 on fourmeme), **not 100**. On non-split platforms (`fourmeme`, `supports_fee_split=false`) only 1 entry is allowed, and a non-self `twitter_handle` is rejected — pass a wallet `address` instead. Unresolvable handles at processor time fall back to the creator's share (no error at submission).
 
 Response (`202 Accepted`):
 ```json
@@ -437,7 +437,7 @@ Pre-check errors:
 - `429 daily_cap_exceeded` — absolute daily cap reached
 
 Fee / platform validation errors:
-- `400 unknown_platform` — `platform` not in `{flap, bfun, fourmeme}`
+- `400 unknown_platform` — `platform` not in `{bfun, flap, fourmeme}`
 - `422 fee_split_not_supported` — platform's `supports_fee_split=false` but `fee_recipients` has >1 entry
 - `422 too_many_recipients` — `len(fee_recipients) > max_fee_recipients`
 - `422 no_creator_fee_share` — platform has `platform_fee_bps == 10000` (no creator share to distribute)
@@ -479,7 +479,7 @@ Response:
   "name": "MOON",
   "symbol": "MOON",
   "chain": "bsc",
-  "platform": "flap",
+  "platform": "bfun",
   "creator_twitter_username": "...",
   "price_usd": "0.0001234",
   "market_cap_usd": "12340",
@@ -505,7 +505,7 @@ Response:
       "name": "MOON",
       "symbol": "MOON",
       "chain": "bsc",
-      "platform": "flap",
+      "platform": "bfun",
       "created_at": "2026-01-01T00:00:00Z"
     }
   ],
@@ -616,7 +616,7 @@ Response:
 }
 ```
 
-`total_earned_bnb` sums `flap + fourmeme + bfun` server-side. `bnb_price_usd` is the current BNB/USD spot price, included so agents can convert `total_earned_bnb` to USD without a separate call. Pre-computed totals refresh roughly every 10 minutes, so expect up to ~10 min of lag after a new on-chain reward.
+`total_earned_bnb` sums `bfun + flap + fourmeme` server-side. `bnb_price_usd` is the current BNB/USD spot price, included so agents can convert `total_earned_bnb` to USD without a separate call. Pre-computed totals refresh roughly every 10 minutes, so expect up to ~10 min of lag after a new on-chain reward.
 
 ---
 
@@ -630,13 +630,13 @@ Response:
 {
   "chain": "bsc",
   "chain_id": 56,
+  "bfun":     { "total_earned_bnb": 1.000, "earning_token_count": 5 },
   "flap":     { "total_earned_bnb": 0.042, "earning_token_count": 3 },
-  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 },
-  "bfun":     { "total_earned_bnb": 1.000, "earning_token_count": 5 }
+  "fourmeme": { "total_earned_bnb": 0.011, "earning_token_count": 1 }
 }
 ```
 
-`flap` and `fourmeme` are always present. `bfun` is declared `Optional` in the OpenAPI contract (added in a later release); the current server always populates it, but codegen'd clients should tolerate its absence for forward-compatibility. `earning_token_count` only counts tokens with a strictly-positive creator reward.
+`bfun`, `flap`, and `fourmeme` are populated by the current server. `bfun` is declared `Optional` in the OpenAPI contract (added in a later release, now the default platform); codegen'd clients should tolerate its absence for forward-compatibility. `earning_token_count` only counts tokens with a strictly-positive creator reward.
 
 ---
 
@@ -646,7 +646,7 @@ Get fee earnings for a specific token on BSC.
 Query: `?chain=bsc&platform=bfun&token_address=0x...`
 
 - `chain`: `bsc` only
-- `platform`: `flap` | `fourmeme` | `bfun`
+- `platform`: `bfun` | `flap` | `fourmeme`
 - `token_address`: contract address
 
 Response (`200 OK`, supported platform):
@@ -666,14 +666,14 @@ Response (`200 OK`, platform outside the supported BSC set):
 {
   "platform": "<requested-platform>",
   "supported": false,
-  "message": "Per-token fee tracking is not available for <requested-platform> on BFunBot. BFunBot supports flap, fourmeme, and bfun on BSC only."
+  "message": "Per-token fee tracking is not available for <requested-platform> on BFunBot. BFunBot supports bfun, flap, and fourmeme on BSC only."
 }
 ```
 
-If `platform` is recognized by the server but not one of `flap` / `fourmeme` / `bfun`, status is `200` and `supported: false`. Check `supported` and surface `message` to the user rather than treating it as an error.
+If `platform` is recognized by the server but not one of `bfun` / `flap` / `fourmeme`, status is `200` and `supported: false`. Check `supported` and surface `message` to the user rather than treating it as an error.
 
 Errors:
-- `400` — Invalid `(chain, platform)` combination. Error hint lists valid combos: `bsc/flap`, `bsc/fourmeme`, `bsc/bfun`.
+- `400` — Invalid `(chain, platform)` combination. Error hint lists valid combos: `bsc/bfun`, `bsc/flap`, `bsc/fourmeme`.
 - `404` — Token not found, or token exists but was not created by the authenticated user.
 
 ---
@@ -769,7 +769,7 @@ Response:
       "token_symbol": "TOP",
       "chain_id": 56,
       "image_url": "https://img.com/top.png",
-      "platform": "flap",
+      "platform": "bfun",
       "creator_reward": 500.25,
       "creator_reward_24h": 12.50,
       "market_cap": 50000,
