@@ -54,11 +54,11 @@ Minimum $1 to start. Credits are consumed per token used.
           { "id": "bfunbot-gpt-5-4-nano",          "name": "GPT 5.4 Nano",             "contextWindow": 400000,     "maxTokens": 16384 },
           { "id": "bfunbot-gpt-5-2-pro",           "name": "GPT 5.2 Pro",              "contextWindow": 400000,     "maxTokens": 16384 },
           { "id": "bfunbot-gpt-5-2-codex",         "name": "GPT 5.2 Codex",            "contextWindow": 400000,     "maxTokens": 16384 },
+          { "id": "bfunbot-gemini-3-5-flash",      "name": "Gemini 3.5 Flash",         "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-gemini-3-1-pro",        "name": "Gemini 3.1 Pro",           "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-gemini-3-1-flash-lite", "name": "Gemini 3.1 Flash Lite",    "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-gemini-3-flash",        "name": "Gemini 3 Flash",           "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-gemini-2-5-pro",        "name": "Gemini 2.5 Pro",           "contextWindow": 1048576,    "maxTokens": 8192  },
-          { "id": "bfunbot-gemini-2-5-flash",      "name": "Gemini 2.5 Flash",         "contextWindow": 1048576,    "maxTokens": 8192  },
           { "id": "bfunbot-grok-4-3",              "name": "Grok 4.3",                 "contextWindow": 1000000,    "maxTokens": 16384 },
           { "id": "bfunbot-deepseek-v4-pro",       "name": "DeepSeek V4 Pro",          "contextWindow": 1048576,    "maxTokens": 16384 },
           { "id": "bfunbot-deepseek-v4-flash",     "name": "DeepSeek V4 Flash",        "contextWindow": 1048576,    "maxTokens": 16384 },
@@ -68,9 +68,9 @@ Minimum $1 to start. Credits are consumed per token used.
           { "id": "bfunbot-mimo-v2-flash",         "name": "MiMo-V2-Flash",            "contextWindow": 262144,     "maxTokens": 16384 },
           { "id": "bfunbot-seed-2-0-lite",         "name": "Seed 2.0 Lite",            "contextWindow": 262144,     "maxTokens": 16384 },
           { "id": "bfunbot-seed-2-0-mini",         "name": "Seed 2.0 Mini",            "contextWindow": 262144,     "maxTokens": 16384 },
+          { "id": "bfunbot-qwen-3-7-max",          "name": "Qwen3.7 Max",              "contextWindow": 1000000,    "maxTokens": 16384 },
           { "id": "bfunbot-qwen-3-6-flash",        "name": "Qwen3.6 Flash",            "contextWindow": 1000000,    "maxTokens": 16384 },
           { "id": "bfunbot-qwen-3-coder-next",     "name": "Qwen3 Coder Next",         "contextWindow": 262144,     "maxTokens": 16384 },
-          { "id": "bfunbot-qwen-3-5-plus",         "name": "Qwen3.5 Plus",             "contextWindow": 1000000,    "maxTokens": 16384 },
           { "id": "bfunbot-minimax-m2-7",          "name": "MiniMax M2.7",             "contextWindow": 204800,     "maxTokens": 16384 },
           { "id": "bfunbot-minimax-m2-5",          "name": "MiniMax M2.5",             "contextWindow": 196608,     "maxTokens": 16384 },
           { "id": "bfunbot-glm-5-1",               "name": "GLM 5.1",                  "contextWindow": 202752,     "maxTokens": 65535 },
@@ -94,11 +94,11 @@ Minimum $1 to start. Credits are consumed per token used.
         "bfunbot/bfunbot-gpt-5-4-nano":          { "alias": "bfunbot-gpt-5-4-nano" },
         "bfunbot/bfunbot-gpt-5-2-pro":           { "alias": "bfunbot-gpt-5-2-pro" },
         "bfunbot/bfunbot-gpt-5-2-codex":         { "alias": "bfunbot-gpt-5-2-codex" },
+        "bfunbot/bfunbot-gemini-3-5-flash":      { "alias": "bfunbot-gemini-3-5-flash" },
         "bfunbot/bfunbot-gemini-3-1-pro":        { "alias": "bfunbot-gemini-3-1-pro" },
         "bfunbot/bfunbot-gemini-3-1-flash-lite": { "alias": "bfunbot-gemini-3-1-flash-lite" },
         "bfunbot/bfunbot-gemini-3-flash":        { "alias": "bfunbot-gemini-3-flash" },
         "bfunbot/bfunbot-gemini-2-5-pro":        { "alias": "bfunbot-gemini-2-5-pro" },
-        "bfunbot/bfunbot-gemini-2-5-flash":      { "alias": "bfunbot-gemini-2-5-flash" },
         "bfunbot/bfunbot-grok-4-3":              { "alias": "bfunbot-grok-4-3" },
         "bfunbot/bfunbot-deepseek-v4-pro":       { "alias": "bfunbot-deepseek-v4-pro" },
         "bfunbot/bfunbot-deepseek-v4-flash":     { "alias": "bfunbot-deepseek-v4-flash" },
@@ -108,9 +108,9 @@ Minimum $1 to start. Credits are consumed per token used.
         "bfunbot/bfunbot-mimo-v2-flash":         { "alias": "bfunbot-mimo-v2-flash" },
         "bfunbot/bfunbot-seed-2-0-lite":         { "alias": "bfunbot-seed-2-0-lite" },
         "bfunbot/bfunbot-seed-2-0-mini":         { "alias": "bfunbot-seed-2-0-mini" },
+        "bfunbot/bfunbot-qwen-3-7-max":          { "alias": "bfunbot-qwen-3-7-max" },
         "bfunbot/bfunbot-qwen-3-6-flash":        { "alias": "bfunbot-qwen-3-6-flash" },
         "bfunbot/bfunbot-qwen-3-coder-next":     { "alias": "bfunbot-qwen-3-coder-next" },
-        "bfunbot/bfunbot-qwen-3-5-plus":         { "alias": "bfunbot-qwen-3-5-plus" },
         "bfunbot/bfunbot-minimax-m2-7":          { "alias": "bfunbot-minimax-m2-7" },
         "bfunbot/bfunbot-minimax-m2-5":          { "alias": "bfunbot-minimax-m2-5" },
         "bfunbot/bfunbot-glm-5-1":               { "alias": "bfunbot-glm-5-1" },
@@ -177,11 +177,11 @@ Switch models using the dropdown picker or `/model` command:
 **Google**
 | Model ID | Context |
 |---|---|
+| `gemini-3.5-flash` | 1M |
 | `gemini-3.1-pro` | 1M |
 | `gemini-3.1-flash-lite` | 1M |
 | `gemini-3-flash` | 1M |
 | `gemini-2.5-pro` | 1M |
-| `gemini-2.5-flash` | 1M |
 
 **xAI**
 | Model ID | Context |
@@ -215,9 +215,9 @@ Switch models using the dropdown picker or `/model` command:
 **Alibaba**
 | Model ID | Context |
 |---|---|
+| `qwen3.7-max` | 1M |
 | `qwen3.6-flash` | 1M |
 | `qwen3-coder-next` | 262k |
-| `qwen3.5-plus` | 1M |
 
 **MiniMax**
 | Model ID | Context |
